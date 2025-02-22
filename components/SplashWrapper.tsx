@@ -29,7 +29,7 @@ const VALIDATE_TOKEN = gql`
 
 // Create the Apollo Client instance outside the component
 const client = new ApolloClient({
-  uri: process.env.NEXT_PUBLIC_URI, // Ensure this environment variable is set
+  uri: process.env.NEXT_PUBLIC_URI,
   cache: new InMemoryCache(),
 });
 
