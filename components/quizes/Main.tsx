@@ -6,7 +6,7 @@ import Image from "next/image";
 import { CategoryType } from "@/data/category";
 import { IoCloseOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
-
+import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 interface MainProps {
   category: {
     id: number;
@@ -16,14 +16,13 @@ interface MainProps {
 }
 
 function Main({ category }: MainProps) {
-    const Router = useRouter();
+  const Router = useRouter();
   const [data, setData] = useState<CategoryType[]>(category);
   const [search, setSearch] = useState<string>("");
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
-
 
   useEffect(() => {
     if (search === "") {
@@ -70,32 +69,15 @@ function Main({ category }: MainProps) {
           </div>
         </div>
         <div className="bg-secondaryBackground w-full h-full overflow-y-scroll pb-[150px] sm:pb-[80px]">
-          <div className="w-full grid grid-cols-1 sm:grid-cols-4 max-w-[95%] sm:max-w-[85%] mx-auto gap-5 p-5">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-4 max-w-full sm:max-w-[85%] mx-auto gap-5  p-5">
             {data.map((item, index) => (
-              <div
+              <Card
                 key={index}
-                className="w-full h-[250px] bg-cardBackground rounded-md cursor-pointer"
-                onClick={()=>{
-                    Router.push(`/quiz/${item.id}`)
-                }}
-              >
-                <div className="h-[180px] w-full  overflow-hidden">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    layout="responsive"
-                    width={100}
-                    height={180}
-                    loading="lazy"
-                    className="rounded-t-md w-full h-full object-center object-cover hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                <div className="h-[70px] w-full flex justify-center items-center">
-                  <p className="text-white font-bold text-[20px]">
-                    {item.name}
-                  </p>
-                </div>
-              </div>
+                name={item.name}
+                image={item.image}
+                id={item.id}
+                Router={Router}
+              />
             ))}
           </div>
         </div>
@@ -103,5 +85,48 @@ function Main({ category }: MainProps) {
     </div>
   );
 }
+
+interface CardProps {
+  name: string;
+  image: string;
+  id: number;
+  Router: ReturnType<typeof useRouter>;
+}
+
+const Card = ({ name, image, id, Router }: CardProps) => {
+  return (
+    <div
+      className=" w-full  h-[230px]"
+      onClick={() => Router.push(`/quiz/${id}`)}
+    >
+      <CardContainer className="inter-var w-full h-full">
+        <CardBody className="bg-gray-50  relative group/card h-full  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-full  rounded-xl p-1 border  ">
+          <CardItem
+            translateZ="60"
+            translateX="5"
+            translateY="-5"
+            className="w-full mt-0"
+          >
+            <Image
+              src={image}
+              height={180}
+              width={1000}
+              className=" h-[180px] min-w-[280px] w-full object-cover rounded-xl group-hover/card:shadow-xl"
+              alt="thumbnail"
+            />
+          </CardItem>
+          <CardItem
+            translateZ="20"
+            translateX="0"
+            translateY="2"
+            className="text-black font-bold text-[20px] w-full text-center mt-1"
+          >
+            {name}
+          </CardItem>
+        </CardBody>
+      </CardContainer>
+    </div>
+  );
+};
 
 export default Main;

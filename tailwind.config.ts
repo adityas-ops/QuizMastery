@@ -6,6 +6,7 @@ export default {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -27,5 +28,35 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [addVariablesForColors],
 } satisfies Config;
+
+
+function addVariablesForColors({ addBase, theme }: any) {
+  const allColors = flattenColorPalette(theme("colors"));
+  const newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+ 
+  addBase({
+    ":root": newVars,
+  });
+}
+function flattenColorPalette(colors: any) {
+  const result: Record<string, string> = {};
+
+  function recurse(obj: any, currentKey: string) {
+    for (const key in obj) {
+      const value = obj[key];
+      const newKey = currentKey ? `${currentKey}-${key}` : key;
+      if (typeof value === "object" && value !== null) {
+        recurse(value, newKey);
+      } else {
+        result[newKey] = value;
+      }
+    }
+  }
+
+  recurse(colors, "");
+  return result;
+}

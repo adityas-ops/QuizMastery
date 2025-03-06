@@ -13,13 +13,16 @@ interface InputComponentProps {
 function InputComponent({ value, setValue, isPassword, label }: InputComponentProps) {
   const [showPassword, setShowPassword] = useState(false);
 
-  // Prevent unnecessary re-renders by using useCallback
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
   }, [setValue]);
 
+  const togglePasswordVisibility = useCallback(() => {
+    setShowPassword((prev) => !prev);
+  }, []);
+
   return (
-    <div className="relative border border-gray-300 rounded-lg w-full h-[45px] mt-2 focus:outline-none focus:ring-2 focus:ring-activeColor focus:border-transparent">
+    <div className="relative border border-gray-300 rounded-lg w-full h-[45px] mt-2">
       <input
         placeholder={label}
         value={value}
@@ -30,8 +33,9 @@ function InputComponent({ value, setValue, isPassword, label }: InputComponentPr
       {isPassword && (
         <div className="absolute top-0 bottom-0 flex items-center right-2">
           <button
-            onClick={() => setShowPassword(!showPassword)}
+            onClick={togglePasswordVisibility}
             className="text-gray-400"
+            type="button"
           >
             {showPassword ? <IoEye className="text-[20px]" /> : <IoMdEyeOff className="text-[20px]" />}
           </button>

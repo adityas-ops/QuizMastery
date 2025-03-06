@@ -1,12 +1,12 @@
 "use client";
-import { Player } from "@lottiefiles/react-lottie-player";
+// import { Player } from "@lottiefiles/react-lottie-player";
 import Link from "next/link";
 import React, { useRef, useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import FeatureCard from "@/components/landingPage/FeatureCard";
 import Footer from "@/components/reusable/Footer";
 import Header from "@/components/reusable/Header";
+import { Boxes } from "@/components/ui/background-boxes";
 
 const features = [
   {
@@ -86,30 +86,9 @@ function Home() {
         className="w-full h-screen overflow-auto pb-[150px]  sm:pb-[50px]  bg-secondaryBackground"
       >
         {/* Hero Section */}
-        <div className="w-full overflow-hidden bg-[#00041C] text-white h-fit sm:h-full relative flex justify-center items-center">
-          <Player
-            autoplay
-            speed={0.6}
-            loop
-            src="/assets/landing-page/hero.json"
-            style={{ height: "150%", width: "150%" }}
-            className="sm:hidden block"
-          ></Player>
-          <Player
-            autoplay
-            speed={0.6}
-            loop
-            src="/assets/landing-page/hero.json"
-            style={{ height: "100%", width: "100%" }}
-            className="sm:block hidden"
-          ></Player>
-          <motion.div
-            initial={{ opacity: 0, y: 300 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              delay: 0.2,
-              duration: 1.5,
-            }}
+        <div className="w-full overflow-hidden bg-[#161616] text-white h-[400px] sm:h-full relative flex justify-center items-center">
+        <Boxes />
+          <div
             className="sm:p-[60px] p-[20px] w-fit h-fit  sm:top-[17%] z-20 absolute bg-blend-darken bg-black/85 border-[1px] border-gray-400 backdrop-filter drop-shadow-2xl rounded-lg flex flex-col justify-center items-center"
           >
             <h1 className="sm:text-[64px] text-[24px] leading-[1.2] text-center font-sans font-extrabold">
@@ -123,7 +102,7 @@ function Home() {
             >
               Get Started
             </Link>
-          </motion.div>
+          </div>
         </div>
 
         {/* feature Section */}
