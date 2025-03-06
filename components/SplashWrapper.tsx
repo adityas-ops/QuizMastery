@@ -1,14 +1,7 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+"use client"
+import React, { useState, useEffect, useCallback } from "react";
 import SplashScreen from "./SplashScreen";
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  useMutation,
-  gql,
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, ApolloProvider, useMutation, gql } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import Loader from "./Loader";
@@ -27,7 +20,6 @@ const VALIDATE_TOKEN = gql`
   }
 `;
 
-// Create the Apollo Client instance outside the component
 const client = new ApolloClient({
   uri: process.env.NEXT_PUBLIC_URI,
   cache: new InMemoryCache(),
@@ -44,49 +36,45 @@ function SplashWrapperContent({ children }: { children: React.ReactNode }) {
     const timer = setTimeout(() => {
       setShowSplash(false);
     }, 4000);
-
     return () => clearTimeout(timer);
   }, []);
 
-  const onFinish = () => {
-    setShowSplash(false);
-  };
+  const initializeUser = useCallback(async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      clearUser();
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const { data } = await validateToken({ variables: { token } });
+
+      if (data?.validateToken?.success) {
+        console.log("data user", data.validateToken.user);
+        updateUser(data.validateToken.user);
+      } else {
+        console.warn("Token validation failed. Logging out...");
+        clearUser();
+        localStorage.removeItem("token");
+        router.push("/login");
+      }
+    } catch (err) {
+      console.error("Error validating token:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [validateToken, updateUser, clearUser, router]);
 
   useEffect(() => {
-    const initializeUser = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        clearUser();
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const { data } = await validateToken({ variables: { token } });
-
-        if (data?.validateToken?.success) {
-          updateUser(data.validateToken.user);
-        } else {
-          console.warn("Token validation failed. Logging out...");
-          clearUser();
-          localStorage.removeItem("token");
-          router.push("/login");
-        }
-      } catch (err) {
-        console.error("Error validating token:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     initializeUser();
-  }, [router, validateToken, updateUser, clearUser]);
+  }, []); 
 
   return (
     <>
       {showSplash ? (
-        <SplashScreen onFinish={onFinish} />
+        <SplashScreen onFinish={() => setShowSplash(false)} />
       ) : (
         <div>
           {isLoading ? (

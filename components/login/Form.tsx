@@ -7,6 +7,7 @@ import Link from "next/link";
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useUser } from "@/context/UserContext";
 
 // Define the GraphQL mutation
 const UserLogin = gql`
@@ -34,6 +35,7 @@ const UserLoginGoogle = gql`
 `;
 
 function Form() {
+    const { updateUser} = useUser();
   const [email, setEmail] = useState("");
   const [gmail, setGmail] = useState("");
   const [password, setPassword] = useState("");
@@ -57,6 +59,7 @@ function Form() {
       if (response?.data?.loginEmail?.success) {
         console.log("Login successful:", response.data.loginEmail);
         localStorage.setItem("token", response.data.loginEmail.token);
+        updateUser(response.data.loginEmail);
         router.back(); // Redirect to the previous page
       } else {
         console.error("Login failed:", response.data.loginEmail.message);
@@ -109,6 +112,7 @@ function Form() {
       });
       if (response?.data?.loginGoogle?.success) {
         console.log("Login successful:", response.data.loginGoogle);
+        updateUser(response.data.loginGoogle);
         localStorage.setItem("token", response.data.loginGoogle.token);
         router.back();
       } else {
